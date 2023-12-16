@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="static/css/layout.css" />
+    <title>{{ getPageTitle .Title }}</title>
+  </head>
+  <body>
+    <header id="website-header">
+      <nav id="website-navbar">
+        <span id="website-title"> {{ .WebsiteTitle}} </span>
+        <menu>
+          <!-- Dynamically Generated -->
+        </menu>
+      </nav>
+    </header>
+    <main id="content">
+      {{ block "content" .Content }}
+      <p>
+        If you are seeing this text something went wrong when composing template
+      </p>
+      {{ end }}
+    </main>
+  </body>
+</html>

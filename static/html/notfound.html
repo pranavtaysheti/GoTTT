@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 | PT_Blog</title>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const path = location.pathname;
+        const pathElement = document.createElement("p");
+        pathElement.textContent = path;
+        document.body.querySelector("#error-details").appendChild(pathElement);
+      });
+    </script>
+    <style>
+      h1 {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Error 404: Not Found</h1>
+    <hr />
+    <div id="error-details" style="background-color: aliceblue;">
+      <style>
+        h1 {
+          color: brown;
+        }
+      </style>
+    </div>
+  </body>
+</html>

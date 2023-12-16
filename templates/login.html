@@ -1,0 +1,18 @@
+{{define "content"}}
+<div class="login-form">
+  <div class="form-error-message">
+    <span>{{.ErrorMessage}}</span>
+  </div>
+  <form name="login-form" method="post" action="/api/login">
+      <label>
+        Player Name
+        <input type="text" name="player-name" />
+      </label>
+      <label>
+        Room Name
+        <input type="text" name="room-name" />
+      </label>
+      <input type="submit" name="submit" value="Enter">
+  </form>
+</div>
+{{end}}
