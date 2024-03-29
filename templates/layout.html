@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="static/css/layout.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <link rel="stylesheet" href="/static/css/layout.css" />
+    {{ block "extra_header"}} {{end}}
     <title>{{ getPageTitle .Title }}</title>
   </head>
   <body>
@@ -12,7 +13,7 @@
       <nav id="website-navbar">
         <span id="website-title"> {{ .WebsiteTitle}} </span>
         <menu>
-          <!-- Dynamically Generated -->
+          <!-- Dynamically Generated on Server -->
         </menu>
       </nav>
     </header>
