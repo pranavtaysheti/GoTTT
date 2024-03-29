@@ -1,3 +1,4 @@
 # GoTTT
 
-An attempt at building online multiplayer TicTacToe game using go
+A multiplayer tic-tac-toe game built using go.
+
