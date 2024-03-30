@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"github.com/google/uuid"
 )
 
@@ -17,13 +16,12 @@ func (p Player) String() string {
 	return uuid.UUID(p).String()
 }
 
-func getPlayerbyUUID(uuid string) (*Player, error) {
-	for _, p := range players {
-		if p.String() == uuid {
-			return p, nil
+func getOrMakePlayer(name string) *Player {
+	for n, p := range players {
+		if n == name {
+			return p
 		}
 	}
 
-	return &Player{}, errors.New("Player of given UUID not found")
+	return NewPlayer(name)
 }
-

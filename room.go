@@ -14,16 +14,16 @@ type Room struct {
 	noPlayers int
 }
 
-func NewRoom(name string) Room {
-	newRoom := Room{
+func NewRoom(name string) *Room {
+	newRoom := &Room{
 		board:     tictactoe.NewBoard(),
 		noPlayers: 0,
 	}
-	rooms[name] = &newRoom
+	rooms[name] = newRoom
 	return newRoom
 }
 
-func (r *Room) AddPlayer(player *Player) error {
+func (r *Room) addPlayer(player *Player) error {
 	if r.noPlayers >= 2 {
 		return errors.New("room housefull")
 	}
@@ -31,8 +31,27 @@ func (r *Room) AddPlayer(player *Player) error {
 	r.players[r.noPlayers] = player
 	r.noPlayers++
 
-	//TODO: Send WS signal to notify client to update player list.
 	return nil
+}
+
+func (r *Room) AddPlayer(player *Player) error {
+	for _, p := range r.players {
+		if p == player {
+			return nil
+		}
+	}
+
+	return r.addPlayer(player)
+}
+
+func getOrMakeRoom(name string) *Room {
+	for n, r := range rooms {
+		if n == name {
+			return r
+		}
+	}
+
+	return NewRoom(name)
 }
 
 func (r *Room) MarkCell(cell int, playerUuid string) error {

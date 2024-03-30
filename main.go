@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"golang.org/x/net/websocket"
 )
 
@@ -25,7 +26,7 @@ const (
 )
 
 type client struct {
-	room *Room
+	room   *Room
 	socket *websocket.Conn
 }
 
@@ -37,11 +38,9 @@ var layoutTmpl = template.Must(template.New("layout.html").Funcs(
 	},
 ).ParseFiles("templates/layout.html"))
 
-var (
-	connections = make(map[*websocket.Conn]int, 100)
-	rooms   = make(map[string]*Room, 100)
-	players = make(map[string]*Player, 100)
-)
+var connections = make(map[uuid.UUID]*client, 100)
+var rooms = make(map[string]*Room, 100)
+var players = make(map[string]*Player, 100)
 
 type Layout struct {
 	WebPages     map[string]string
@@ -55,7 +54,7 @@ type LoginPage struct {
 }
 
 type RoomPage struct {
-	PlayerName string
+	ClientName string
 	RoomName   string
 }
 
@@ -68,6 +67,15 @@ func getLayoutTmpl() *template.Template {
 	return t
 }
 
+func getClientByUUIDString(u string) (*client, error) {
+	for id, c := range connections {
+		if id.String() == u {
+			return c, nil
+		}
+	}
+
+	return &client{}, errors.New("Client with given uuid not found")
+}
 
 func main() {
 	r := chi.NewRouter()
@@ -79,8 +87,8 @@ func main() {
 		}
 
 		err = t.Execute(w, Layout{
-			WebPages:     map[string]string{},
-			Title:        "Login",
+			WebPages: map[string]string{},
+			Title:    "Login",
 			Content: LoginPage{
 				ErrorMessage: "Some Error happened!!!",
 			},
@@ -99,14 +107,9 @@ func main() {
 
 	r.Get("/r/{room}", func(w http.ResponseWriter, r *http.Request) {
 		room_name := chi.URLParam(r, "room")
-		player, err := checkPlayerCookie(r)
+		cid, err := getClientCookie(r)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
-		}
-		_, ok := rooms[room_name]
-		if !ok {
-			tmpl := getLayoutTmpl()
-			tmpl.ParseFiles("templates/roomnotfound.html")
 		}
 
 		tmpl := getLayoutTmpl()
@@ -116,10 +119,10 @@ func main() {
 		}
 
 		tmpl.Execute(w, Layout{
-			WebPages:     map[string]string{},
-			Title:        "Room",
+			WebPages: map[string]string{},
+			Title:    "Room",
 			Content: RoomPage{
-				PlayerName: player.String(),
+				ClientName: cid.String(),
 				RoomName:   room_name,
 			},
 		})

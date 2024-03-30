@@ -4,7 +4,11 @@ import (
 	"errors"
 	"log"
 	"net/http"
+
+	"github.com/google/uuid"
 )
+
+const ClientCookieName = "client_id"
 
 func validateLoginInfo(r *http.Request) (pn string, rn string, err error) {
 	err = r.ParseForm()
@@ -26,26 +30,35 @@ func validateLoginInfo(r *http.Request) (pn string, rn string, err error) {
 	return pn, rn, err
 }
 
-func checkPlayerCookie(r *http.Request) (*Player, error) {
-	playerCookie, err := r.Cookie("ptxo_player")
+func getClientCookie(r *http.Request) (*http.Cookie, error) {
+	clientCookie, err := r.Cookie(ClientCookieName)
 	if err != nil {
-		log.Println("Error reading player cookie, no player cookie found")
-		return &Player{}, err
+		log.Println("Error reading player cookie, no client cookie found")
+		return &http.Cookie{}, err
 	}
 
-	player, err := getPlayerbyUUID(playerCookie.Value)
-	return player, err
+	return clientCookie, nil
 }
 
-func makePlayerCookie(p *Player) *http.Cookie {
+func getClientFromCookie(c *http.Cookie) (*client, error) {
+	cl, err := getClientByUUIDString(c.Value)
+	if err != nil {
+		log.Println("Client not found, corresponding to cookie")
+		return &client{}, err
+	}
+	return cl, err
+}
+
+func makeClientCookie(c uuid.UUID) *http.Cookie {
 	cookie := http.Cookie{
-		Name:  "ptxo_player",
-		Value: p.String(),
+		Name:  ClientCookieName,
+		Value: c.String(),
 		Path:  "/",
 	}
 
 	return &cookie
 }
+
 
 func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 	playerName, roomName, err := validateLoginInfo(r)
@@ -54,7 +67,10 @@ func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 
-	p := NewPlayer(playerName)
-	http.SetCookie(w, makePlayerCookie(p))
+	p := getOrMakePlayer(playerName)
+	ro := getOrMakeRoom(roomName)
+
+	//TODO
+	http.SetCookie(w, makeClientCookie(c))
 	http.Redirect(w, r, "/r/"+roomName, http.StatusFound)
 }

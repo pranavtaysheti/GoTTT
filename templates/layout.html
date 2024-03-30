@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     <link rel="stylesheet" href="/static/css/layout.css" />
-    {{ block "extra_header"}} {{end}}
+    {{ template "extra_header"}}
     <title>{{ getPageTitle .Title }}</title>
   </head>
   <body>
     <header id="website-header">
       <nav id="website-navbar">
-        <span id="website-title"> {{ .WebsiteTitle}} </span>
+        <span id="website-title"> PT_XO </span>
         <menu>
           <!-- Dynamically Generated on Server -->
         </menu>
@@ -26,3 +26,5 @@
     </main>
   </body>
 </html>
+
+{{define "extra_header"}} {{end}}
