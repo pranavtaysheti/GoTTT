@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/google/uuid"
 	"golang.org/x/net/websocket"
@@ -49,4 +50,27 @@ func (c *client) Login (p *Player, r *Room) error {
 	}
 
 	return nil
+}
+
+func (c *client) ConnectSocket (ws *websocket.Conn) error {
+	if c.socket != nil {
+		return errors.New("Client already associated with socket")
+	}
+
+	c.socket = ws
+	return nil
+}
+
+func getClientFromRequest(r *http.Request) (*client, error) {
+	c, err := getClientCookie(r)
+	if err != nil {
+		return nil, err 
+	}
+
+	cl, err := getClientFromCookie(c)
+	if err != nil {
+		return nil, err 
+	}
+
+	return cl, nil
 }
