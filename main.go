@@ -85,7 +85,7 @@ func main() {
 
 	r.Get("/r/{room}", func(w http.ResponseWriter, r *http.Request) {
 		room_name := chi.URLParam(r, "room")
-		cid, err := getClientCookie(r)
+		c, err := getClientCookie(r)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
@@ -100,7 +100,7 @@ func main() {
 			WebPages: map[string]string{},
 			Title:    "Room",
 			Content: RoomPage{
-				ClientName: cid.String(),
+				ClientName: c.Value,
 				RoomName:   room_name,
 			},
 		})
