@@ -6,6 +6,8 @@ import (
 
 type Player uuid.UUID
 
+var players = make(map[string]*Player, 100)
+
 func NewPlayer(name string) *Player {
 	player := Player(uuid.New())
 	players[name] = &player

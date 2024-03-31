@@ -7,28 +7,10 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 	"golang.org/x/net/websocket"
 )
 
 const websiteTitle = "PT_XO"
-
-const (
-	wssDisconnected = iota
-	wssConnecting
-	wssConnected
-)
-
-const (
-	wsmUpdateRoom      = "UPDATE_ROOM"
-	wsmUpdateBoard     = "UPDATE_BOARD"
-	wsmConnectionReady = "CONNECTION_READY"
-)
-
-type client struct {
-	room   *Room
-	socket *websocket.Conn
-}
 
 var layoutTmpl = template.Must(template.New("layout.html").Funcs(
 	map[string]any{
@@ -37,10 +19,6 @@ var layoutTmpl = template.Must(template.New("layout.html").Funcs(
 		},
 	},
 ).ParseFiles("templates/layout.html"))
-
-var connections = make(map[uuid.UUID]*client, 100)
-var rooms = make(map[string]*Room, 100)
-var players = make(map[string]*Player, 100)
 
 type Layout struct {
 	WebPages     map[string]string

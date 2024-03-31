@@ -14,6 +14,8 @@ type Room struct {
 	noPlayers int
 }
 
+var rooms = make(map[string]*Room, 100)
+
 func NewRoom(name string) *Room {
 	newRoom := &Room{
 		board:     tictactoe.NewBoard(),

@@ -67,10 +67,13 @@ func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 
+	cu := NewClient()
+	c := connections[cu]
+
 	p := getOrMakePlayer(playerName)
 	ro := getOrMakeRoom(roomName)
+	c.Login(p, ro)
 
-	//TODO
-	http.SetCookie(w, makeClientCookie(c))
+	http.SetCookie(w, makeClientCookie(cu))
 	http.Redirect(w, r, "/r/"+roomName, http.StatusFound)
 }

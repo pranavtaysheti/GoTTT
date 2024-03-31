@@ -7,6 +7,18 @@ import (
 	"golang.org/x/net/websocket"
 )
 
+const (
+	wssDisconnected = iota
+	wssConnecting
+	wssConnected
+)
+
+const (
+	wsmUpdateRoom      = "UPDATE_ROOM"
+	wsmUpdateBoard     = "UPDATE_BOARD"
+	wsmConnectionReady = "CONNECTION_READY"
+)
+
 func wsHandler(ws *websocket.Conn) {
 	c, err := getClientCookie(ws.Request())
 	if err != nil {
