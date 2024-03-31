@@ -34,7 +34,7 @@ func getClientCookie(r *http.Request) (*http.Cookie, error) {
 	clientCookie, err := r.Cookie(ClientCookieName)
 	if err != nil {
 		log.Println("Error reading player cookie, no client cookie found")
-		return &http.Cookie{}, err
+		return nil, err
 	}
 
 	return clientCookie, nil
@@ -44,7 +44,7 @@ func getClientFromCookie(c *http.Cookie) (*client, error) {
 	cl, err := getClientByUUIDString(c.Value)
 	if err != nil {
 		log.Println("Client not found, corresponding to cookie")
-		return &client{}, err
+		return nil, err
 	}
 	return cl, err
 }
