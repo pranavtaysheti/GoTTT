@@ -65,14 +65,20 @@ func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	cu := NewClient()
 	c := connections[cu]
 
-	p := getOrMakePlayer(playerName)
+	p := NewPlayer(playerName)
 	ro := getOrMakeRoom(roomName)
-	c.Login(p, ro)
+	err = c.Login(p, ro)
+	if err != nil {
+		log.Println(err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
 	http.SetCookie(w, makeClientCookie(cu))
 	http.Redirect(w, r, "/r/"+roomName, http.StatusFound)

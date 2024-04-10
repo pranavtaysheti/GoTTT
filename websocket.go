@@ -13,10 +13,12 @@ const (
 	wssConnected
 )
 
+type WsMessage string
+
 const (
-	wsmUpdateRoom      = "UPDATE_ROOM"
-	wsmUpdateBoard     = "UPDATE_BOARD"
-	wsmConnectionReady = "CONNECTION_READY"
+	wsmUpdateRoom      = WsMessage("UPDATE_ROOM")
+	wsmUpdateBoard     = WsMessage("UPDATE_BOARD")
+	wsmConnectionReady = WsMessage("CONNECTION_READY")
 )
 
 func wsHandler(ws *websocket.Conn) {

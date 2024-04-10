@@ -4,26 +4,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type Player uuid.UUID
-
-var players = make(map[string]*Player, 100)
+type Player struct {
+	uuid uuid.UUID
+	name  string
+}
 
 func NewPlayer(name string) *Player {
-	player := Player(uuid.New())
-	players[name] = &player
-	return &player
-}
-
-func (p Player) String() string {
-	return uuid.UUID(p).String()
-}
-
-func getOrMakePlayer(name string) *Player {
-	for n, p := range players {
-		if n == name {
-			return p
-		}
+	player := Player{
+		uuid: uuid.New(),
+		name: name,
 	}
 
-	return NewPlayer(name)
+	return &player
 }
