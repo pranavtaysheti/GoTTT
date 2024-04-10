@@ -6,4 +6,4 @@ require github.com/go-chi/chi/v5 v5.0.12
 
 require github.com/google/uuid v1.6.0
 
-require golang.org/x/net v0.22.0
+require golang.org/x/net v0.24.0
