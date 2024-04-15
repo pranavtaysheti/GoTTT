@@ -7,7 +7,6 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-
 func main() {
 	r := chi.NewRouter()
 
@@ -19,7 +18,10 @@ func main() {
 		http.ServeFile(w, r, "./static/html/notfound.html")
 	})
 
-	r.Get("/r/{room}", RoomPageHandler)
+	r.Route("/r/{room}", func(r chi.Router) {
+		r.Use(LoginCookieMiddleware, RoomExistsMiddleware, RoomPermissionMiddleware)
+		r.Get("/", RoomPageHandler)
+	})
 
 	r.Post("/api/login", loginApiHandler)
 	r.Post("/api/board", boardApiHandler)

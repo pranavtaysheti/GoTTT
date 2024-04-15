@@ -1,12 +1,13 @@
-package main
+package templating
 
 import (
 	"html/template"
-	"log"
 	"io"
+	"log"
 )
 
 const websiteTitle = "PT_XO"
+const templatesPath = "templates/"
 
 type Layout struct {
 	WebPages     map[string]string
@@ -21,7 +22,7 @@ var layoutTmpl = template.Must(template.New("layout.html").Funcs(
 			return title + " | " + websiteTitle
 		},
 	},
-).ParseFiles("templates/layout.html"))
+).ParseFiles(templatesPath + "layout.html"))
 
 func getLayoutTmpl() *template.Template {
 	t, err := layoutTmpl.Clone()
@@ -32,21 +33,22 @@ func getLayoutTmpl() *template.Template {
 	return t
 }
 
-func getTemplate(n string) *template.Template {
-	tmpl := getLayoutTmpl()
-	tmpl, err := tmpl.ParseFiles(n)
-	if err != nil {
-		log.Fatal(err)
+func getTemplate(tn ...string) *template.Template {
+	for i, n := range tn {
+		tn[i] = templatesPath + n
 	}
 
-	return tmpl
+	tmpl := getLayoutTmpl()
+	return template.Must(tmpl.ParseFiles(tn...))
 }
 
-func ExecuteLayout (t *template.Template, w io.Writer, c any) error {	
+func ExecuteLayout(w io.Writer, c any, tn ...string) error {
+	t := getTemplate(tn...)
+
 	return t.Execute(w, Layout{
-		WebPages: map[string]string{},
-		Title:    "Login",
-		Content: c,
+		WebPages:     map[string]string{},
+		Title:        "Login",
+		Content:      c,
 		CurrentRoute: "/",
 	})
 }

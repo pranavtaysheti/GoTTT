@@ -83,3 +83,4 @@ func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, makeClientCookie(cu))
 	http.Redirect(w, r, "/r/"+roomName, http.StatusFound)
 }
+
