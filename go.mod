@@ -1,4 +1,4 @@
-module github.com/pranavtaysheti/goTTT
+module github.com/pranavtaysheti/GoTTT
 
 go 1.21.5
 

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/pranavtaysheti/goTTT/templating"
+	"github.com/pranavtaysheti/GoTTT/templating"
 )
 
 type LoginPage struct {

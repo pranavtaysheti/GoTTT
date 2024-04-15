@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/pranavtaysheti/GoTTT/server"
 )
 
 const ClientCookieName = "client_id"
@@ -30,6 +31,20 @@ func validateLoginInfo(r *http.Request) (pn string, rn string, err error) {
 	return pn, rn, err
 }
 
+func getClientFromRequest(r *http.Request) (*server.Client, error) {
+	c, err := getClientCookie(r)
+	if err != nil {
+		return nil, err 
+	}
+
+	cl, err := getClientFromCookie(c)
+	if err != nil {
+		return nil, err 
+	}
+
+	return cl, nil 
+}
+
 func getClientCookie(r *http.Request) (*http.Cookie, error) {
 	clientCookie, err := r.Cookie(ClientCookieName)
 	if err != nil {
@@ -40,8 +55,8 @@ func getClientCookie(r *http.Request) (*http.Cookie, error) {
 	return clientCookie, nil
 }
 
-func getClientFromCookie(c *http.Cookie) (*client, error) {
-	cl, err := getClientByUUIDString(c.Value)
+func getClientFromCookie(c *http.Cookie) (*server.Client, error) {
+	cl, err := server.GetClientByUUIDString(c.Value)
 	if err != nil {
 		log.Println("Client not found, corresponding to cookie")
 		return nil, err
@@ -68,11 +83,11 @@ func loginApiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cu := NewClient()
-	c := connections[cu]
+	cu := server.NewClient()
+	c := server.Connections[cu]
 
-	p := NewPlayer(playerName)
-	ro := getOrMakeRoom(roomName)
+	p := server.NewPlayer(playerName)
+	ro := server.GetOrMakeRoom(roomName)
 	err = c.Login(p, ro)
 	if err != nil {
 		log.Println(err)

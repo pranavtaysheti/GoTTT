@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/pranavtaysheti/goTTT/templating"
+	"github.com/pranavtaysheti/GoTTT/templating"
 )
 
 func LoginCookieMiddleware(next http.Handler) http.Handler {
