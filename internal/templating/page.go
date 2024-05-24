@@ -10,10 +10,8 @@ const websiteTitle = "PT_XO"
 const templatesPath = "templates/"
 
 type Layout struct {
-	WebPages     map[string]string
 	Title        string
 	Content      any
-	CurrentRoute string
 }
 
 var layoutTmpl = template.Must(template.New("layout.html").Funcs(
@@ -33,22 +31,30 @@ func getLayoutTmpl() *template.Template {
 	return t
 }
 
-func getTemplate(tn ...string) *template.Template {
+func AddTemplates(tmpl *template.Template, tn ...string) *template.Template {
+
 	for i, n := range tn {
 		tn[i] = templatesPath + n
 	}
 
-	tmpl := getLayoutTmpl()
-	return template.Must(tmpl.ParseFiles(tn...))
+	tmpl, err := tmpl.ParseFiles(tn...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return tmpl
 }
 
-func ExecuteLayout(w io.Writer, c any, tn ...string) error {
+func getTemplate(tn ...string) *template.Template {
+	tmpl := getLayoutTmpl()
+	return AddTemplates(tmpl, tn...)
+}
+
+func Render(w io.Writer, pt string, c any, tn ...string) error {
 	t := getTemplate(tn...)
 
 	return t.Execute(w, Layout{
-		WebPages:     map[string]string{},
-		Title:        "Login",
+		Title:        pt,
 		Content:      c,
-		CurrentRoute: "/",
 	})
 }

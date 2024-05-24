@@ -6,9 +6,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/pranavtaysheti/GoTTT/templating"
-	"github.com/pranavtaysheti/GoTTT/server"
-
+	"github.com/pranavtaysheti/GoTTT/internal/server"
+	"github.com/pranavtaysheti/GoTTT/internal/templating"
 )
 
 type RoomPage struct {
@@ -23,7 +22,7 @@ func RoomExistsMiddleware(next http.Handler) http.Handler {
 		room, ok := server.Rooms[room_name]
 		if !ok {
 			w.WriteHeader(http.StatusNoContent)
-			templating.ExecuteLayout(w, nil, "roomnotfound.html")
+			templating.Render(w, "Room Not Found", nil, "roomnotfound.html")
 			return
 		}
 
@@ -52,7 +51,7 @@ func RoomPermissionMiddleware(next http.Handler) http.Handler {
 		cl_room, _ := cl.GetRoom()
 		if cl_room != con_room {
 			w.WriteHeader(http.StatusForbidden)
-			templating.ExecuteLayout(w, nil, "notpermitted.html")
+			templating.Render(w, "Not Permitted", nil, "notpermitted.html")
 			return
 		}
 
@@ -69,8 +68,9 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cl_player, _ := cl.GetPlayer()
-	templating.ExecuteLayout(
+	templating.Render(
 		w,
+		"roomname here",
 		RoomPage{
 			Player:      cl_player.GetName(),
 			RoomName:    "something",

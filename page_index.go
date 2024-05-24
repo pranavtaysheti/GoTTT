@@ -3,18 +3,37 @@ package main
 import (
 	"net/http"
 
-	"github.com/pranavtaysheti/GoTTT/templating"
+	"github.com/pranavtaysheti/GoTTT/internal/templating"
 )
 
-type LoginPage struct {
+type LoginContent struct {
+	LoginForm LoginForm
+}
+
+type LoginError struct {
 	ErrorMessage string
 }
 
+type LoginFormValues struct {
+	PlayerName string
+	RoomName string
+}
+
+type LoginForm struct {
+	Values LoginFormValues
+	Error LoginError
+}
+
 func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
-	templating.ExecuteLayout(
+
+	
+	templating.Render(
 		w,
-		LoginPage{
-			ErrorMessage: "Some Error happened!!!",
+		"Login",
+		LoginContent{
+			LoginForm: LoginForm{
+
+			},
 		},
 		"login.html",
 	)

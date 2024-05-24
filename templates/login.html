@@ -1,16 +1,39 @@
-{{define "content"}}
+{{define content}}
+<div>
+  {{template "login_form" .LoginForm}}
+</div>
+{{end}}
+
+{{define "login-form"}}
 <div class="login-form">
-  <div class="form-error-message">
-    <span>{{.ErrorMessage}}</span>
+  <div class="error">
+    {{ if .Error }} {{template "login-error" .Error}} {{end}}
   </div>
-  <form name="login-form" method="post" action="/api/login">
+  <div class="input">
+    {{template login-input .Values}}
+  </div>
+</div>
+{{end}}
+
+{{define login-error}}
+<div class="messagebox">
+  <span> {{.ErrorMessage }} </span>
+</div>
+{{end}}
+
+{{define login-input}}
+  <form name="login" method="post" action="/api/login">
     <label>
       Player Name
-      <input type="text" name="player-name" />
+      <input type="text" name="player-name"
+        {{if .PlayerName}} value="{{PlayerName}}" {{end}}
+      />
     </label>
     <label>
       Room Name
-      <input type="text" name="room-name" />
+      <input type="text" name="room-name"
+        {{if .RoomName}} value="{{RoomName}}" {{end}}
+      />
     </label>
     <input type="submit" name="submit" value="Enter" />
   </form>
