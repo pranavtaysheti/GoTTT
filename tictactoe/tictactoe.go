@@ -1,78 +1,120 @@
 package tictactoe
 
-import "errors"
-
-type Mark uint8
-
-const (
-	MarkNone Mark = iota
-	MarkX
-	MarkO
+import (
+	"fmt"
 )
 
+type pos [2]int
+
+func (p pos) split() (row int, col int) {
+	return p[0], p[1]
+}
+
+type Mark rune
+
+func (m Mark) validate() bool {
+	if m != MarkX && m != MarkO {
+		return false
+	}
+
+	return true
+}
+
+const (
+	MarkNone Mark = 'N'
+	MarkX    Mark = 'X'
+	MarkO    Mark = 'O'
+)
+
+type cells [3][3]Mark
+
+func (c cells) checkPos(pos pos) bool {
+	row, col := pos.split()
+	if row >= 3 || row < 0 || col >= 3 || col < 0 {
+		return false
+	}
+
+	return true
+}
+
+var win_conditions = [8][3]pos{
+	{{0, 0}, {0, 1}, {0, 2}},
+	{{1, 0}, {1, 1}, {1, 2}},
+	{{2, 0}, {2, 1}, {2, 2}},
+	{{0, 0}, {1, 1}, {2, 2}},
+	{{2, 0}, {1, 1}, {0, 2}},
+	{{0, 0}, {1, 0}, {2, 0}},
+	{{0, 1}, {1, 1}, {2, 1}},
+	{{0, 2}, {1, 2}, {2, 2}},
+}
+
 type Board struct {
-	cells    [9]Mark
-	nextMark Mark
+	Cells  cells
+	Winner Mark
+	Next   Mark
 }
 
 func NewBoard() Board {
-	result := Board{}
-	result.nextMark = MarkX
+	result := Board{
+		Cells: cells{
+			{MarkNone, MarkNone, MarkNone},
+			{MarkNone, MarkNone, MarkNone},
+			{MarkNone, MarkNone, MarkNone},
+		},
+		Winner: MarkNone,
+	}
+
 	return result
 }
 
-func (b *Board) updateNextMark() error {
-	var updatedMark Mark
-
-	switch b.nextMark {
-	case MarkX:
-		updatedMark = MarkO
-	case MarkO:
-		updatedMark = MarkX
-	default:
-		return errors.New("invalid NextMark Property set")
+func (b *Board) Place(m Mark, pos pos) error {
+	if !m.validate() {
+		return fmt.Errorf("cannot place mark %q", m)
 	}
 
-	b.nextMark = updatedMark
+	if m != b.Next {
+		return fmt.Errorf("not %q's turn, cannot place", m)
+	}
+
+	if !b.Cells.checkPos(pos) {
+		return fmt.Errorf("position %v out of bounds", pos)
+	}
+
+	if b.checkWinner(m) {
+		b.Winner = m
+	}
+
+	row, col := pos.split()
+	(*b).Cells[row][col] = m
 	return nil
 }
 
-func (b *Board) PlaceMark(m Mark, p int) error {
-	if p >= 9 {
-		return errors.New("invalid Mark Position")
+func (b *Board) checkWinner(m Mark) bool {
+	filteredPos := [3][3]bool{
+		{false, false, false},
+		{false, false, false},
+		{false, false, false},
 	}
-	if b.nextMark != m {
-		return errors.New("invalid Turn")
-	}
 
-	b.cells[p] = m
-	b.updateNextMark()
-	return nil
-}
-
-func (b *Board) getPositions(m Mark) []int {
-	p := make([]int, 0, 9)
-	c := 0
-
-	for i, v := range b.cells {
-		if v == m {
-			p = p[:c+1]
-			p[c] = i
-			c++
+	for i, row := range b.Cells {
+		for j, c := range row {
+			if c == m {
+				filteredPos[i][j] = true
+			}
 		}
 	}
 
-	return p
-}
-
-func (b *Board) CheckWinner(m Mark) bool {
-	/*
-		win_conditions := [8][3]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}}
-		p := b.getPositions(m)
-
-		for _, cond := range win_conditions {
-			//TODO
+sol_loop:
+	for _, sol := range win_conditions {
+		for _, pos := range sol {
+			row, col := pos.split()
+			if !filteredPos[row][col] {
+				continue sol_loop
+			}
 		}
-	*/
+
+		return true
+	}
+
 	return false
 }

@@ -23,8 +23,7 @@ func main() {
 		r.Get("/", RoomPageHandler)
 	})
 
-	r.Post("/api/login", loginApiHandler)
-	r.Post("/api/board", boardApiHandler)
+	r.Post("/api/auth", loginApiHandler)
 	r.Post("/api/room", roomApiHandler)
 	r.Handle("/ws", websocket.Handler(wsHandler))
 	http.ListenAndServe(":3000", r)

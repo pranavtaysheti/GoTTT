@@ -1,4 +1,4 @@
-package server
+package room
 
 import (
 	"errors"
@@ -6,13 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/pranavtaysheti/GoTTT/tictactoe"
 )
-
-type Room struct {
-	board     tictactoe.Board
-	players   [2]*Player
-	noPlayers int
-	clients   []*Client
-}
 
 func GetOrMakeRoom(name string) *Room {
 	for n, r := range Rooms {
